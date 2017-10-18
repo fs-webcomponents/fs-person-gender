@@ -1,4 +1,6 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../fs-person-mixin/fs-person-mixin.html">
+<link rel="import" href="../paper-radio-group/paper-radio-group.html">
 
 <dom-module id="fs-person-gender">
   <template>
@@ -6,8 +8,41 @@
       :host {
         display: block;
       }
+      
+      .toolbar {
+        visibility: hidden;
+        text-align: right;
+      }
+      
+      :host(:hover) .toolbar {
+        visibility: visible;
+      }
+      
+      [hidden] {
+        display: none !important;
+      }
     </style>
-    <h2>Hello [[prop1]]!</h2>
+    <template is="dom-if" if="[[editable]]">
+      <div class="toolbar">
+        <a id="edit" href hidden$="[[edit]]">Edit</a>
+        <a id="close" href hidden$="[[!edit]]">Close</a>
+        <a id="save" href hidden$="[[!edit]]">Save</a>
+      </div>
+      <div hidden$="[[!edit]]">
+        <paper-radio-group selected="[[_calculateSelected(gender.type)]]" on-iron-select="_selectionChanged">
+          <paper-radio-button name="male" value="http://gedcomx.org/Male">Male</paper-radio-button>
+          <paper-radio-button name="female" value="http://gedcomx.org/Female">Female</paper-radio-button>
+          <paper-radio-button name="unknown" value="http://gedcomx.org/Unknown">Unknown</paper-radio-button>
+        </paper-radio-group>
+      </div>
+    </template>
+    <div hidden$="[[edit]]">{{_genderDisplay(gender.type)}}</div>
+    <template is="dom-if" if="[[editable]]">
+      <fs-attribution 
+        hidden$="[[!edit]]" 
+        attribution="{{gender.attribution}}"
+        edit="[[edit]]"></fs-attribution>
+    </template>
   </template>
 
   <script>
@@ -19,15 +54,100 @@
      * @polymer
      * @demo demo/index.html
      */
-    class FsPersonGender extends Polymer.Element {
+    class FsPersonGender extends FSPersonMixin(Polymer.Element) {
       static get is() { return 'fs-person-gender'; }
       static get properties() {
         return {
-          prop1: {
-            type: String,
-            value: 'fs-person-gender'
+          gender: Object,
+          
+          /**
+           * Whether the gender can be edited. This will show a toolbar when the
+           * user hovers over the gender.
+           */
+          editable: {
+            type: Boolean,
+            value: false,
+            observer: '_setupEditable'
+          },
+          
+          /**
+           * Whether the gender is currently in edit mode
+           */
+          edit: {
+            type: Boolean,
+            value: false
+          },
+          
+          /**
+           * Whether the gender is being saved
+           */
+          saving: {
+            type: Boolean,
+            value: false,
+            readOnly: true,
+            notify: true
           }
         };
+      }
+      
+      _personChanged() {
+        if(this.person && this.person.gender) {
+          this.gender = this.person.gender;
+        } else {
+          this.gender = undefined;
+        }
+      }
+      
+      _genderDisplay(type) {
+        switch(type) {
+          case 'http://gedcomx.org/Male':
+            return 'Male';
+          case 'http://gedcomx.org/Female':
+            return 'Female';
+          default:
+            return 'Unknown';
+        }
+      }
+      
+      _calculateSelected(type) {
+        return this._genderDisplay(type).toLowerCase();
+      }
+      
+      _selectionChanged(e) {
+        this.set('gender.type', e.detail.item.value);
+      }
+      
+      _setupEditable(editable) {
+        if(editable) {
+          setTimeout(() => {
+            this.shadowRoot.querySelector('#edit').addEventListener('click', (e) => {
+              this.edit = true;
+              e.preventDefault();
+            });
+            this.shadowRoot.querySelector('#close').addEventListener('click', (e) => {
+              this.edit = false;
+              e.preventDefault();
+            });
+            this.shadowRoot.querySelector('#save').addEventListener('click', (e) => {
+              this.edit = false;
+              e.preventDefault();
+              if(this.personId) {
+                const request = new FSRequest();
+                request.url = `/platform/tree/persons/${this.personId}`;
+                request.method = 'POST';
+                request.body = {
+                  persons: [{
+                    gender: this.gender
+                  }]
+                };
+                request.addEventListener('loading-changed', (e) => {
+                  this._setSaving(e.detail.value);
+                });
+                request.generateRequest();
+              }
+            });
+          });
+        }
       }
     }
 

@@ -10,6 +10,8 @@
 
     <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
     <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+    <link rel="import" href="../../fs-client/fs-client.html">
+    <link rel="import" href="../../fs-signin/fs-signin.html">
     <link rel="import" href="../fs-person-gender.html">
 
     <custom-style>
@@ -19,10 +21,18 @@
   </head>
   <body>
     <div class="vertical-section-container centered">
+      <fs-client id="client" app-key="a02j00000099Mc2AAE" redirect-uri="." save-access-token exchange-code redirect-after-sign-in="."></fs-client>
+      <fs-signin></fs-signin>
       <h3>Basic fs-person-gender demo</h3>
       <demo-snippet>
         <template>
           <fs-person-gender></fs-person-gender>
+        </template>
+      </demo-snippet>
+      <h3>Editable fs-person-gender demo</h3>
+      <demo-snippet>
+        <template>
+          <fs-person-gender editable person-id="L58F-778"></fs-person-gender>
         </template>
       </demo-snippet>
     </div>
