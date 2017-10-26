@@ -1,6 +1,8 @@
 <link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../polymer/lib/elements/dom-if.html">
 <link rel="import" href="../fs-person-mixin/fs-person-mixin.html">
 <link rel="import" href="../paper-radio-group/paper-radio-group.html">
+<link rel="import" href="fs-person-gender-selector.html">
 
 <dom-module id="fs-person-gender">
   <template>
@@ -29,11 +31,7 @@
         <a id="save" href hidden$="[[!edit]]">Save</a>
       </div>
       <div hidden$="[[!edit]]">
-        <paper-radio-group selected="[[_calculateSelected(gender.type)]]" on-iron-select="_selectionChanged">
-          <paper-radio-button name="male" value="http://gedcomx.org/Male">Male</paper-radio-button>
-          <paper-radio-button name="female" value="http://gedcomx.org/Female">Female</paper-radio-button>
-          <paper-radio-button name="unknown" value="http://gedcomx.org/Unknown">Unknown</paper-radio-button>
-        </paper-radio-group>
+        <fs-person-gender-selector gender="[[gender.type]]" on-gender-changed="_selectionChanged"></fs-person-gender-selector>
       </div>
     </template>
     <div hidden$="[[edit]]">{{_genderDisplay(gender.type)}}</div>
@@ -109,12 +107,8 @@
         }
       }
       
-      _calculateSelected(type) {
-        return this._genderDisplay(type).toLowerCase();
-      }
-      
       _selectionChanged(e) {
-        this.set('gender.type', e.detail.item.value);
+        this.gender = {type: e.detail.value};
       }
       
       _setupEditable(editable) {

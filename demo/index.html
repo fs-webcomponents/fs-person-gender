@@ -13,6 +13,7 @@
     <link rel="import" href="../../fs-client/fs-client.html">
     <link rel="import" href="../../fs-signin/fs-signin.html">
     <link rel="import" href="../fs-person-gender.html">
+    <link rel="import" href="../fs-person-gender-selector.html">
 
     <custom-style>
       <style is="custom-style" include="demo-pages-shared-styles">
@@ -33,6 +34,24 @@
       <demo-snippet>
         <template>
           <fs-person-gender editable person-id="L58F-778"></fs-person-gender>
+        </template>
+      </demo-snippet>
+      <h3>Editing fs-person-gender demo</h3>
+      <demo-snippet>
+        <template>
+          <fs-person-gender editable edit person-id="L58F-778"></fs-person-gender>
+        </template>
+      </demo-snippet>
+      <h3>Basic fs-person-gender-selector demo</h3>
+      <demo-snippet>
+        <template>
+          <fs-person-gender-selector></fs-person-gender-selector>
+        </template>
+      </demo-snippet>
+      <h3>Setting the gender on fs-person-gender-selector demo</h3>
+      <demo-snippet>
+        <template>
+          <fs-person-gender-selector gender="http://gedcomx.org/Female"></fs-person-gender-selector>
         </template>
       </demo-snippet>
     </div>
