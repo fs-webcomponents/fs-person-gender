@@ -36,7 +36,8 @@
     </template>
     <div hidden$="[[edit]]">{{_genderDisplay(gender.type)}}</div>
     <template is="dom-if" if="[[editable]]">
-      <fs-attribution 
+      <fs-attribution
+        client-name="[[clientName]]"
         hidden$="[[!edit]]" 
         attribution="{{gender.attribution}}"
         edit="[[edit]]"></fs-attribution>
@@ -128,6 +129,7 @@
               if(this.personId) {
                 const request = document.createElement('fs-request');
                 request.url = `/platform/tree/persons/${this.personId}`;
+                request.clientName = this.clientName;
                 request.method = 'POST';
                 request.body = {
                   persons: [{
