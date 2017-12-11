@@ -8,10 +8,10 @@
         display: block;
       }
     </style>
-    <paper-radio-group selected="{{gender}}">
-      <paper-radio-button name="http://gedcomx.org/Male">Male</paper-radio-button>
-      <paper-radio-button name="http://gedcomx.org/Female">Female</paper-radio-button>
-      <paper-radio-button name="http://gedcomx.org/Unknown">Unknown</paper-radio-button>
+    <paper-radio-group selected="{{gender}}" allow-empty-selection>
+      <paper-radio-button disabled="[[disabled]]" name="http://gedcomx.org/Male">Male</paper-radio-button>
+      <paper-radio-button disabled="[[disabled]]" name="http://gedcomx.org/Female">Female</paper-radio-button>
+      <paper-radio-button disabled="[[disabled]]" name="http://gedcomx.org/Unknown">Unknown</paper-radio-button>
     </paper-radio-group>
   </template>
 
@@ -31,6 +31,10 @@
           gender: {
             type: String,
             notify: true
+          },
+          disabled: {
+            type: Boolean,
+            value: false
           }
         };
       }
